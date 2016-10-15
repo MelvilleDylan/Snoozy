@@ -42,7 +42,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Uri notification;
     private Ringtone alarm;
     private Boolean alarm_active = false;
-    private int radius = 30; //radius of the circle around the destination
+    private int radius = 300; //radius of the circle around the destination
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
     private View search_button;
@@ -219,10 +219,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markerOptions.position(latLng);
         markerOptions.title(location_input);
 
+        dest_loc.setLongitude(latLng.longitude);
+        dest_loc.setLatitude(latLng.latitude);
+
         mMap.clear();
         mMap.addMarker(markerOptions);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(1));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
     }
 
