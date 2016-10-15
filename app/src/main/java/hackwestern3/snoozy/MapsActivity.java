@@ -3,11 +3,21 @@ package hackwestern3.snoozy;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -24,7 +34,17 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final int LOCATION_REFRESH_DISTANCE = 10; //td- figure out number to go here
+    private static final int LOCATION_REFRESH_TIME = 10; //td- figure out number to go here
     private GoogleMap mMap;
+    private LatLng destination;
+    private Location dest_loc;
+    private Uri notification;
+    private Ringtone alarm;
+    private Boolean alarm_active = false;
+    private int radius = 30; //radius of the circle around the destination
+    private int mInterval = 5000; // 5 seconds by default, can be changed later
+    final static int REQUEST_LOCATION = 0;
     private View search_button;
 
     @Override
@@ -81,7 +101,81 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+            mMap.setMyLocationEnabled(true);
+        } else {
+            // permission has been granted, continue as usual
+            mMap.setMyLocationEnabled(true);
+        }
+
+
+        // Add a temp marker in not Sydney and move the camera
+        double lat = 43.013909;//43.013409;
+        double lon = -81.295102;//-81.295102;
+        destination = new LatLng(lat, lon);
+        dest_loc = new Location("destination");
+        dest_loc.setLongitude(lon);
+        dest_loc.setLatitude(lat);
+        mMap.addMarker(new MarkerOptions().position(destination).title("Marker not in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
+
+
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                LOCATION_REFRESH_DISTANCE, mLocationListener);
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng arg0) {
+                Log.d("mclick", "screen pressed");
+                if (alarm_active) {
+                    Log.d("mclick", "alarm turning off");
+                    alarm.stop();
+                    alarm_active = false;
+                }
+            }
+        });
     }
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            //your code here
+            float distance = location.distanceTo(dest_loc);
+            Log.d("distance", Float.toString(distance));
+            if (distance < radius) {
+                Log.d("location", "distance close enough");
+                if (!alarm_active) {
+                    try {
+                        notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                        alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                        alarm.play();
+                        alarm_active = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                Log.d("location", "distance too far");
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {}
+
+        @Override
+        public void onProviderEnabled(String provider) {}
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,6 +190,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.exit_on_tap) {
             finish();
             return true;
+        }
+        else if (id == R.id.settings) {
+            Intent settings = new Intent(MapsActivity.this, settings.class);
+            MapsActivity.this.startActivity(settings);
         }
 
         return super.onOptionsItemSelected(item);
