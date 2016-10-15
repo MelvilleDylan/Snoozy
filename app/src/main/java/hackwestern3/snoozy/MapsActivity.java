@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +46,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Ringtone alarm;
     private Boolean alarm_active = false;
     public int radius;
+    private View search_button;
 
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
@@ -75,6 +77,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         else {
             radius = 800;
         }
+
+        TextView TOA = (TextView)(findViewById(R.id.time_of_arrival));
+        TOA.setText(""+radius);
         /*
         The radius should first attempt to set to the current trip's set radius. If there is no set
         radius, the default value is used and if there is no default value set then it is set as 800m.
