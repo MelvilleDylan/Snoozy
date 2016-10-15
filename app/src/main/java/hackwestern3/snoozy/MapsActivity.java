@@ -1,6 +1,7 @@
 package hackwestern3.snoozy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -64,6 +65,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (id == R.id.exit_on_tap) {
             finish();
             return true;
+        }
+        else if (id == R.id.settings) {
+            Intent settings = new Intent(MapsActivity.this, settings.class);
+            MapsActivity.this.startActivity(settings);
         }
 
         return super.onOptionsItemSelected(item);
