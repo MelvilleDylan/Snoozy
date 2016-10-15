@@ -79,7 +79,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         TextView TOA = (TextView)(findViewById(R.id.time_of_arrival));
-        TOA.setText(""+radius);
+        TOA.setText(radius+"m");
         /*
         The radius should first attempt to set to the current trip's set radius. If there is no set
         radius, the default value is used and if there is no default value set then it is set as 800m.
