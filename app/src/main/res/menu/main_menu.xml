@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:title="Menu"
+        android:id="@+id/main_menu"
+        ></item>
+
+
+    <group android:checkableBehavior="single"></group>
+
+
+    <item
+        android:title="@string/alarm"
+        android:id="@+id/radius_location"
+        android:orderInCategory="01"
+        app:showAsAction="always"
+
+        />
+
+    <item
+        android:title="@string/last_location"
+        android:id="@+id/alarm"
+        android:orderInCategory="02"
+        app:showAsAction="always"
+        ></item>
+
+    <item
+        android:title="@string/setting"
+        android:id="@+id/settings"
+        android:orderInCategory="03"
+        app:showAsAction="always"
+
+        ></item><!--android:actionViewClass=""-->
+
+    <item
+        android:title="Exit"
+        android:id="@+id/exit_on_tap"
+        android:orderInCategory="04"
+        app:showAsAction="always"
+        ></item>
+
+
+
+
+
+</menu>
