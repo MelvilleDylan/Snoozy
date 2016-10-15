@@ -102,6 +102,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (alarm_active) {
                     Log.d("mclick", "alarm turning off");
                     alarm.stop();
+                    alarm_active = false;
                 }
             }
         });
