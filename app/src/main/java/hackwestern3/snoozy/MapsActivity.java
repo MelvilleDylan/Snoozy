@@ -13,13 +13,11 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -141,17 +139,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
 
-        // Add a temp marker in not Sydney and move the camera
-        double lat = 43.013909;//43.013409;
-        double lon = -81.295102;//-81.295102;
-        destination = new LatLng(lat, lon);
-        dest_loc = new Location("destination");
-        dest_loc.setLongitude(lon);
-        dest_loc.setLatitude(lat);
-        mMap.addMarker(new MarkerOptions().position(destination).title("Marker not in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
-
-
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
@@ -172,6 +159,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
+
         @Override
         public void onLocationChanged(final Location location) {
             //your code here
