@@ -223,10 +223,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-<<<<<<< HEAD
-=======
-
-
     protected void search(List<Address> addresses) {
 
         Address address = (Address) addresses.get(0);
@@ -253,7 +249,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
     }
-
-
->>>>>>> origin/travisbranch1
 }
