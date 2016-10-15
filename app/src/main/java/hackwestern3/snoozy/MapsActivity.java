@@ -2,6 +2,7 @@ package hackwestern3.snoozy;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -38,7 +39,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Uri notification;
     private Ringtone alarm;
     private Boolean alarm_active = false;
-    private int radius = 30; //radius of the circle around the destination
+    public int radius;
+
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
 
@@ -52,6 +54,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences proximity_settings = getSharedPreferences("proximity_settings", MODE_PRIVATE);
+        SharedPreferences.Editor settingsEditor = proximity_settings.edit();
+        //Recovering and saving internal disk values for the settings
+        if (proximity_settings.contains("radius")) {
+            radius = proximity_settings.getInt("radius", 800);
+        }
+        else if (proximity_settings.contains("default_radius")) {
+            radius = proximity_settings.getInt("default_radius", 800);
+        }
+        else {
+            radius = 800;
+        }
+        /*
+        The radius should first attempt to set to the current trip's set radius. If there is no set
+        radius, the default value is used and if there is no default value set then it is set as 800m.
+         */
+    }
 
     /**
      * Manipulates the map once available.
