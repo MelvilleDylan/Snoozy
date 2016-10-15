@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CommuteClock</string>
+    <string name="app_name">Proximity</string>
     <string name="title_activity_maps">Map</string>
     <string name="alarm">Alarm</string>
     <string name="setting">Settings</string>

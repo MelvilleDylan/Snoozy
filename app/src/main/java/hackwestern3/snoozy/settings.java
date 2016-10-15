@@ -17,7 +17,7 @@ import java.io.Serializable;
  * status bar and navigation/system bar) with user interaction.
  */
 public class settings extends AppCompatActivity implements Serializable {
-    Intent menu_settings = getIntent();
+
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -95,6 +95,7 @@ public class settings extends AppCompatActivity implements Serializable {
 
         setContentView(R.layout.activity_settings);
 
+        Intent menu_settings = getIntent();
         mVisible = true;
 
         // Set up the user interaction to manually show or hide the system UI.

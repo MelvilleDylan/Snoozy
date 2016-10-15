@@ -32,7 +32,6 @@
         android:id="@+id/settings"
         android:orderInCategory="03"
         app:showAsAction="always"
-
         ></item><!--android:actionViewClass=""-->
 
     <item

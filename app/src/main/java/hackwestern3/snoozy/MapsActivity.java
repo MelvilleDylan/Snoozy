@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,21 +58,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id = item.getItemId();
 
-        if (id == R.id.exit_on_tap) {
-            finish();
-            return true;
+        switch (id) {
+            case R.id.exit_on_tap:
+                finish();
+                return true;
+            case R.id.settings:
+                Intent settings = new Intent(MapsActivity.this, settings.class);
+                Log.d("Settings","Settings Button Pressed");
+                startActivity(settings);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else if (id == R.id.settings) {
-            Intent settings = new Intent(MapsActivity.this, settings.class);
-            MapsActivity.this.startActivity(settings);
-        }
-
-        return super.onOptionsItemSelected(item);
-
     }
+
 }
