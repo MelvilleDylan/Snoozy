@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +39,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Boolean alarm_active = false;
     private int radius = 30; //radius of the circle around the destination
     private int mInterval = 5000; // 5 seconds by default, can be changed later
-    private Handler mHandler;
     final static int REQUEST_LOCATION = 0;
 
     @Override
