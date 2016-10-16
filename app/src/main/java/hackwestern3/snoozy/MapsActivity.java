@@ -27,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int LOCATION_REFRESH_DISTANCE = 10; //td- figure out number to go here
     private static final int LOCATION_REFRESH_TIME = 10; //td- figure out number to go here
     private GoogleMap mMap;
-    private LatLng destination;
+    private LatLng coordinates;
     private Location dest_loc;
     private Uri notification;
     private Ringtone alarm;
@@ -47,6 +48,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     final static int REQUEST_LOCATION = 0;
     private View search_button;
 
+    private Destination destination;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +116,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setMyLocationEnabled(true);
         }
 
-
+        /*
         // Add a temp marker in not Sydney and move the camera
         double lat = 43.013909;//43.013409;
         double lon = -81.295102;//-81.295102;
@@ -123,6 +126,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dest_loc.setLatitude(lat);
         mMap.addMarker(new MarkerOptions().position(destination).title("Marker not in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
+        */
 
 
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -133,13 +137,51 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
-            public void onMapClick(LatLng arg0) {
+            public void onMapClick(LatLng selected_latlng) {
                 Log.d("mclick", "screen pressed");
                 if (alarm_active) {
                     Log.d("mclick", "alarm turning off");
                     alarm.stop();
                     alarm_active = false;
+                } else {
+                    // testing adding marker with touch
+                    notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
+
+                    Location selected_loc = new Location("destination");
+                    selected_loc.setLongitude(selected_latlng.longitude);
+                    selected_loc.setLatitude(selected_latlng.latitude);
+
+                    mMap.clear();
+                    Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
+                    
+                    destination = new Destination(newmarker, selected_loc, alarm);
+
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
+                    dest_loc.setLongitude(selected_latlng.longitude);
+                    dest_loc.setLatitude(selected_latlng.latitude);
                 }
+            }
+        });
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                LatLng latlng = marker.getPosition();
+
+                Location loc = new Location("destination"); //TODO: use the previous location name
+                loc.setLongitude(latlng.longitude);
+                loc.setLatitude(latlng.latitude);
+                destination.setLocation(loc);
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
             }
         });
     }
@@ -148,16 +190,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onLocationChanged(final Location location) {
             //your code here
-            float distance = location.distanceTo(dest_loc);
+            float distance = location.distanceTo(destination.getLocation());
             Log.d("distance", Float.toString(distance));
-            if (distance < radius) {
+            if (distance < destination.getRadius()) {
                 Log.d("location", "distance close enough");
-                if (!alarm_active) {
+                if (!destination.getAlarm_active()) {
                     try {
-                        notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                        alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                        alarm.play();
-                        alarm_active = true;
+                        destination.getAlarm().play();
+                        destination.setAlarm_active(true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -218,6 +258,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         markerOptions.position(latLng);
         markerOptions.title(location_input);
+        markerOptions.draggable(true);
 
         dest_loc.setLongitude(latLng.longitude);
         dest_loc.setLatitude(latLng.latitude);
@@ -228,6 +269,66 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
     }
+    
+    
+    class Destination {
+        private Marker marker;
+        private int radius = 30;
+        private Location location;
+        private Ringtone alarm;
+        private Boolean alarm_active = false;
 
+        Destination (Marker m, Location l) {
+            marker = m;
+            location = l;
+            alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        }
+
+        Destination (Marker m, Location l, Ringtone r) {
+            marker = m;
+            location = l;
+            alarm = r;
+        }
+
+        public Marker getMarker() {
+            return marker;
+        }
+
+        public int getRadius() {
+            return radius;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public Ringtone getAlarm() {
+            return alarm;
+        }
+
+        public void setMarker(Marker marker) {
+            this.marker = marker;
+        }
+
+        public void setRadius(int radius) {
+            this.radius = radius;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
+        }
+
+        public void setAlarm(Ringtone alarm) {
+            this.alarm = alarm;
+        }
+
+        public Boolean getAlarm_active() {
+            return alarm_active;
+        }
+
+        public void setAlarm_active(Boolean alarm_active) {
+            this.alarm_active = alarm_active;
+        }
+    }
 
 }
