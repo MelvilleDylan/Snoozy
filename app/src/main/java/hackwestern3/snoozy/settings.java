@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -31,6 +32,16 @@ public class settings extends AppCompatActivity implements Serializable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         Intent menu_settings = getIntent();
+
+        Button exit_settings;
+        exit_settings = (Button) findViewById(R.id.settings_go_back);
+
+        exit_settings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
     }
 
 
