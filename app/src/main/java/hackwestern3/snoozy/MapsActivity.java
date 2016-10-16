@@ -41,8 +41,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng destination;
     private Location dest_loc;
     private Uri notification;
-    private Ringtone alarm;
-    private Boolean alarm_active = false;
     public int radius;
     private View search_button;
 
@@ -143,19 +141,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
                 LOCATION_REFRESH_DISTANCE, mLocationListener);
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-            @Override
-            public void onMapClick(LatLng arg0) {
-                Log.d("mclick", "screen pressed");
-                if (alarm_active) {
-                    Log.d("mclick", "alarm turning off");
-                    alarm.stop();
-                    alarm_active = false;
-                }
-            }
-        });
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
@@ -166,17 +151,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             float distance = location.distanceTo(dest_loc);
             Log.d("distance", Float.toString(distance));
             if (distance < radius) {
-                Log.d("location", "distance close enough");
-                if (!alarm_active) {
-                    try {
-                        notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                        alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                        alarm.play();
-                        alarm_active = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                startActivity(new Intent(MapsActivity.this,alarm_popup.class));
             } else {
                 Log.d("location", "distance too far");
             }
