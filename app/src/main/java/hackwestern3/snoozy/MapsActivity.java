@@ -115,7 +115,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setMyLocationEnabled(true);
         }
 
-
+        /*
         // Add a temp marker in not Sydney and move the camera
         double lat = 43.013909;//43.013409;
         double lon = -81.295102;//-81.295102;
@@ -125,6 +125,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         dest_loc.setLatitude(lat);
         mMap.addMarker(new MarkerOptions().position(destination).title("Marker not in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
+        */
 
 
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -150,6 +151,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     selected_loc.setLongitude(selected_latlng.longitude);
                     selected_loc.setLatitude(selected_latlng.latitude);
 
+                    mMap.clear();
                     Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
                     
                     destination = new Destination(newmarker, selected_loc, alarm);
