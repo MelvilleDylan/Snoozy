@@ -39,6 +39,8 @@
         </activity>
         <activity android:name=".LocationHistory">
         </activity>
+        <activity android:name="alarm_popup">
+        </activity>
         <activity
             android:name=".settings"
             android:label="Settings"
