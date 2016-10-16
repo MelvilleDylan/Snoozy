@@ -178,6 +178,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.locationHistory:
+                Intent locations = new Intent(MapsActivity.this, LocationHistory.class );
+                Log.d("Settings","Settings Button Pressed");
+                startActivity(locations);
+                return true;
             case R.id.exit_on_tap:
                 finish();
                 return true;
