@@ -54,6 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private View search_button;
     private Ringtone alarm = null;
     private LocationManager mLocationManager;
+    private boolean alarm_activated = false;
 
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
@@ -159,8 +160,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onMapClick(LatLng selected_latlng) {
-                Log.d("mclick", "screen pressed");
-
+                    alarm_activated = false;
+                    Log.d("alarm_activated", "set to false by screen press");
                     Location selected_loc = new Location("destination");
                     selected_loc.setLongitude(selected_latlng.longitude);
                     selected_loc.setLatitude(selected_latlng.latitude);
@@ -211,14 +212,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 Location location = mLocationManager.getLastKnownLocation(provider);
+                //TODO permissions check
 
-                float distance = location.distanceTo(destination.getLocation());
-                Log.d("distance", Float.toString(distance));
-                if (distance < radius) {
-                    startActivity(new Intent(MapsActivity.this,alarm_popup.class));
-                } else {
-                    Log.d("location", "distance too far");
-                }
+//                float distance = location.distanceTo(destination.getLocation());
+//                Log.d("distance", Float.toString(distance));
+//                if ((distance < radius) && (alarm_activated = false)) {
+//                    Log.d("alarm_activated", "Alarm was false, and is now true");
+//                    alarm_activated=true;
+//                    startActivity(new Intent(MapsActivity.this,alarm_popup.class));
+//                } else {
+//                    Log.d("location", "distance too far");
+//                }
+                //For testing purposes, this activates the alarm when its placed within the radius
+                //TODO out of production, into special development branch
+
             }
 
             @Override
@@ -272,12 +279,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onLocationChanged(final Location location) {
             //your code here
-            float distance = location.distanceTo(destination.getLocation());
-            Log.d("distance", Float.toString(distance));
-            if (distance < radius) {
-                startActivity(new Intent(MapsActivity.this,alarm_popup.class));
-            } else {
-                Log.d("location", "distance too far");
+            try {
+                float distance = location.distanceTo(destination.getLocation());
+                Log.d("distance", Float.toString(distance));
+                if ((distance < radius) && (alarm_activated == false)) {
+                    Log.d("alarm_activated", "Alarm was false, and is now true");
+                    alarm_activated = true;
+                    startActivity(new Intent(MapsActivity.this, alarm_popup.class));
+                } else {
+                    Log.d("location", "distance too far");
+                    Log.d("alarm_activated", "Alarm activated: " + alarm_activated);
+                }
+            }
+            catch (NullPointerException e) {
+                Log.d("location", "Location info error");
             }
         }
 
