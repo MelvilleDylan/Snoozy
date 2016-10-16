@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+
 import hackwestern3.snoozy.R;
 
 import java.io.Serializable;
@@ -98,6 +100,7 @@ public class settings extends AppCompatActivity implements Serializable {
         Intent menu_settings = getIntent();
         mVisible = true;
 
+
         // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,10 +109,20 @@ public class settings extends AppCompatActivity implements Serializable {
             }
         });
 
+        Button exit_settings;
+        exit_settings = (Button) findViewById(R.id.settings_go_back);
+
+        
+
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
     }
+
+    private void onClick(Button exit_settings) {
+        finish();
+    }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -128,6 +141,7 @@ public class settings extends AppCompatActivity implements Serializable {
             show();
         }
     }
+
 
     private void hide() {
         // Hide UI first
