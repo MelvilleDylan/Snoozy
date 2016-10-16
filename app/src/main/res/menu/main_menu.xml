@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
 
 
     <item
@@ -14,7 +21,7 @@
 
     <item
         android:title="@string/alarm"
-        android:id="@+id/radius_location"
+        android:id="@+id/alarm_settings"
         android:orderInCategory="01"
         app:showAsAction="always"
 
@@ -22,7 +29,7 @@
 
     <item
         android:title="@string/last_location"
-        android:id="@+id/alarm"
+        android:id="@+id/locationHistory"
         android:orderInCategory="02"
         app:showAsAction="always"
         ></item>

@@ -1,6 +1,5 @@
 package hackwestern3.snoozy;
 
-import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -31,6 +29,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
+
+import layout.AlarmFragment;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -172,8 +172,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.d("location", "distance close enough");
                     if (!d.getAlarm_active()) {
                         try {
+
                             //notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
                             //alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                            Intent alarm = new Intent(MapsActivity.this, AlarmFragment.class);
+                            //final int result =1
+                            alarm.putExtra("location", "MapsActivity");
+                            startActivity(alarm);
+
                             d.getAlarm().play();
                             d.setAlarm_active(true);
                         } catch (Exception e) {
@@ -208,6 +214,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.alarm_settings:
+                //Intent alarm = new Intent(MapsActivity.this, )
+                return true;
+            case R.id.locationHistory:
+                Intent locations = new Intent(MapsActivity.this, LocationHistory.class );
+                Log.d("Settings","Settings Button Pressed");
+                startActivity(locations);
+                return true;
             case R.id.exit_on_tap:
                 finish();
                 return true;

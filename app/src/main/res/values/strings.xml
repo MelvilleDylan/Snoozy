@@ -9,4 +9,13 @@
 
     <string name="title_activity_settings">settings</string>
     <string name="google_maps_key">AIzaSyCcQtvF2kxhlwjfCf6KY_QwSpDsCeZiFkQ</string>
+    <string name="title_activity_alarm">alarm</string>
+
+    <string name="alarm_name"> <u>Alarm Options</u> </string>
+    <string name="alarm_type">Alarm Sound</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Wake up!</string>
+    <string name="title_activity_location_history">LocationHistory</string>
 </resources>
