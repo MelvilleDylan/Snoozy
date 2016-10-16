@@ -150,7 +150,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     selected_loc.setLongitude(selected_latlng.longitude);
                     selected_loc.setLatitude(selected_latlng.latitude);
 
-                    Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker"));
+                    Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
                     
                     destination = new Destination(newmarker, selected_loc, alarm);
                     //add new class element to the list
@@ -158,6 +158,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     dest_loc.setLongitude(selected_latlng.longitude);
                     dest_loc.setLatitude(selected_latlng.latitude);
                 }
+            }
+        });
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                LatLng latlng = marker.getPosition();
+
+                Location loc = new Location("destination"); //TODO: use the previous location name
+                loc.setLongitude(latlng.longitude);
+                loc.setLatitude(latlng.latitude);
+                destination.setLocation(loc);
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
             }
         });
     }
@@ -234,6 +255,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         markerOptions.position(latLng);
         markerOptions.title(location_input);
+        markerOptions.draggable(true);
 
         dest_loc.setLongitude(latLng.longitude);
         dest_loc.setLatitude(latLng.latitude);
