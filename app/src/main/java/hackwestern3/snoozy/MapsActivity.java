@@ -80,16 +80,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Recovering and saving internal disk values for the settings
         if (proximity_settings.contains("radius")) {
             radius = proximity_settings.getInt("radius", 800);
-        }
-        else if (proximity_settings.contains("default_radius")) {
+        } else if (proximity_settings.contains("default_radius")) {
             radius = proximity_settings.getInt("default_radius", 800);
-        }
-        else {
+        } else {
             radius = 800;
         }
 
-        TextView TOA = (TextView)(findViewById(R.id.time_of_arrival));
-        TOA.setText(radius+"m");
+        TextView TOA = (TextView) (findViewById(R.id.time_of_arrival));
+        TOA.setText(radius + "m");
         /*
         The radius should first attempt to set to the current trip's set radius. If there is no set
         radius, the default value is used and if there is no default value set then it is set as 800m.
@@ -160,20 +158,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onMapClick(LatLng selected_latlng) {
-                    alarm_activated = false;
-                    Log.d("alarm_activated", "set to false by screen press");
-                    Location selected_loc = new Location("destination");
-                    selected_loc.setLongitude(selected_latlng.longitude);
-                    selected_loc.setLatitude(selected_latlng.latitude);
+                alarm_activated = false;
+                Log.d("alarm_activated", "set to false by screen press");
+                Location selected_loc = new Location("destination");
+                selected_loc.setLongitude(selected_latlng.longitude);
+                selected_loc.setLatitude(selected_latlng.latitude);
 
-                    mMap.clear();
-                    Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
+                mMap.clear();
+                Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
 
-                    destination = new Destination(newmarker, selected_loc, alarm);
+                destination = new Destination(newmarker, selected_loc, alarm);
 
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
-                    dest_loc.setLongitude(selected_latlng.longitude);
-                    dest_loc.setLatitude(selected_latlng.latitude);
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
+                dest_loc.setLongitude(selected_latlng.longitude);
+                dest_loc.setLatitude(selected_latlng.latitude);
 
             }
 
@@ -190,16 +188,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 //check for distance here as well
                 String provider = null;
-                try{
+                try {
                     mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 
-
-                    if ( mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-                        provider = LocationManager.GPS_PROVIDER ;
+                    if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        provider = LocationManager.GPS_PROVIDER;
                         Log.d("Unity", "Using GPS");
                         //m_locationManager.requestLocationUpdates(provider, 0, 0, this);
-                    } else if(mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                    } else if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                         provider = LocationManager.NETWORK_PROVIDER;
                         Log.d("Unity", "Using Netword");
                         //m_locationManager.requestLocationUpdates(provider, 0, 0, this);
@@ -207,12 +204,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.d("Unity", "Provider Not available");
                     }
 
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     Log.d("Unity", "locatons error " + ex.getMessage());
                 }
 
+                if (ActivityCompat.checkSelfPermission(MapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 Location location = mLocationManager.getLastKnownLocation(provider);
-                //TODO permissions check
 
 //                float distance = location.distanceTo(destination.getLocation());
 //                Log.d("distance", Float.toString(distance));
