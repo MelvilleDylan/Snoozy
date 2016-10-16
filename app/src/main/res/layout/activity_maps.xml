@@ -21,7 +21,8 @@
         android:id="@+id/time_of_arrival"
         android:background="#3F51B5"
         android:textColor="#FFFFFF"
-        android:text="TOA"
+        android:text=""
+        android:layout_centerHorizontal="true"
         android:textSize="14sp"
         />
 

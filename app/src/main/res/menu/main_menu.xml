@@ -13,16 +13,8 @@
 
 
     <item
-        android:title="@string/alarm"
-        android:id="@+id/radius_location"
-        android:orderInCategory="01"
-        app:showAsAction="always"
-
-        />
-
-    <item
         android:title="@string/last_location"
-        android:id="@+id/alarm"
+        android:id="@+id/locationHistory"
         android:orderInCategory="02"
         app:showAsAction="always"
         ></item>
@@ -32,7 +24,6 @@
         android:id="@+id/settings"
         android:orderInCategory="03"
         app:showAsAction="always"
-
         ></item><!--android:actionViewClass=""-->
 
     <item
