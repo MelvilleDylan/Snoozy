@@ -47,7 +47,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     final static int REQUEST_LOCATION = 0;
     private View search_button;
 
-    private List<Destination> destinations = new ArrayList<Destination>();;
+    private Destination destination;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +151,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     selected_loc.setLatitude(selected_latlng.latitude);
 
                     Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker"));
-                    destinations.add(new Destination(newmarker, selected_loc, alarm));
+                    
+                    destination = new Destination(newmarker, selected_loc, alarm);
                     //add new class element to the list
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
                     dest_loc.setLongitude(selected_latlng.longitude);
@@ -165,22 +166,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void onLocationChanged(final Location location) {
             //your code here
-            for (Destination d : destinations) {
-                float distance = location.distanceTo(d.getLocation());
-                Log.d("distance", Float.toString(distance));
-                if (distance < d.getRadius()) {
-                    Log.d("location", "distance close enough");
-                    if (!d.getAlarm_active()) {
-                        try {
-                            d.getAlarm().play();
-                            d.setAlarm_active(true);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            float distance = location.distanceTo(destination.getLocation());
+            Log.d("distance", Float.toString(distance));
+            if (distance < destination.getRadius()) {
+                Log.d("location", "distance close enough");
+                if (!destination.getAlarm_active()) {
+                    try {
+                        destination.getAlarm().play();
+                        destination.setAlarm_active(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } else {
-                    Log.d("location", "distance too far");
                 }
+            } else {
+                Log.d("location", "distance too far");
             }
         }
 
@@ -264,6 +263,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             marker = m;
             location = l;
             alarm = r;
+        }
+        
+        ~Destination () {
+            m.remove(); // remove the marker from the map on destruction
         }
 
         public Marker getMarker() {
