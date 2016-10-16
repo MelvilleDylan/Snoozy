@@ -112,7 +112,12 @@ public class settings extends AppCompatActivity implements Serializable {
         Button exit_settings;
         exit_settings = (Button) findViewById(R.id.settings_go_back);
 
-        
+        exit_settings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -120,7 +125,7 @@ public class settings extends AppCompatActivity implements Serializable {
     }
 
     private void onClick(Button exit_settings) {
-        finish();
+        menu_settings.finish();
     }
 
 
