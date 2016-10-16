@@ -52,6 +52,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Uri notification;
     public int radius;
     private View search_button;
+    private Ringtone alarm = null;
 
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
@@ -158,14 +159,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapClick(LatLng selected_latlng) {
                 Log.d("mclick", "screen pressed");
-                if (destination.getAlarm_active()) {
-                    Log.d("mclick", "alarm turning off");
-                    destination.getAlarm().stop();
-                    destination.setAlarm_active(false);
-                } else {
-                    // testing adding marker with touch
-                    notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                    alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
                     Location selected_loc = new Location("destination");
                     selected_loc.setLongitude(selected_latlng.longitude);
@@ -179,8 +172,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
                     dest_loc.setLongitude(selected_latlng.longitude);
                     dest_loc.setLatitude(selected_latlng.latitude);
-                }
+
             }
+
         });
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
