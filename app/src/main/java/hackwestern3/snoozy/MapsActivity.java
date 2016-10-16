@@ -27,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int LOCATION_REFRESH_DISTANCE = 10; //td- figure out number to go here
     private static final int LOCATION_REFRESH_TIME = 10; //td- figure out number to go here
     private GoogleMap mMap;
-    private LatLng destination;
+    private LatLng coordinates;
     private Location dest_loc;
     private Uri notification;
     private Ringtone alarm;
@@ -287,10 +288,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             marker = m;
             location = l;
             alarm = r;
-        }
-        
-        ~Destination () {
-            m.remove(); // remove the marker from the map on destruction
         }
 
         public Marker getMarker() {
