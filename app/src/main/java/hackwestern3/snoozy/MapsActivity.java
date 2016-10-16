@@ -153,8 +153,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
                     
                     destination = new Destination(newmarker, selected_loc, alarm);
-                    //add new class element to the list
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
+
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
                     dest_loc.setLongitude(selected_latlng.longitude);
                     dest_loc.setLatitude(selected_latlng.latitude);
                 }
