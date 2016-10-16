@@ -124,10 +124,6 @@ public class settings extends AppCompatActivity implements Serializable {
         // while interacting with the UI.
     }
 
-    private void onClick(Button exit_settings) {
-        menu_settings.finish();
-    }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
