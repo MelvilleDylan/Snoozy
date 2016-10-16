@@ -47,7 +47,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     final static int REQUEST_LOCATION = 0;
     private View search_button;
 
-    private List<Destination> destinations;
+    private List<Destination> destinations = new ArrayList<Destination>();;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,8 +172,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.d("location", "distance close enough");
                     if (!d.getAlarm_active()) {
                         try {
-                            //notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                            //alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
                             d.getAlarm().play();
                             d.setAlarm_active(true);
                         } catch (Exception e) {
