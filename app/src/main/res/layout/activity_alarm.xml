@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#765f5f"
+    android:weightSum="1"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_width="312dp"
+        android:layout_height="282dp"
+        android:src="@drawable/clock" />
+    <Button
+        android:layout_width="275dp"
+        android:layout_height="24dp"
+        android:text="Dismiss"
+        android:id="@+id/dismiss_button"
+        android:background="#c3c3c3"
+        android:layout_weight="0.17" />
+    </LinearLayout>

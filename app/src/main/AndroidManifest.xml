@@ -37,6 +37,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".settings">
+        </activity>
+        <activity android:name=".marker_popup">
+        </activity>
+        <activity android:name=".alarm_popup">
+        </activity>
     </application>
 
 </manifest>

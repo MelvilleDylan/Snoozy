@@ -145,21 +145,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     alarm_active = false;
                 } else {
                     // testing adding marker with touch
-                    notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                    alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
                     Location selected_loc = new Location("destination");
                     selected_loc.setLongitude(selected_latlng.longitude);
                     selected_loc.setLatitude(selected_latlng.latitude);
 
+                    //Put this in the onResume with some if statements.
                     mMap.clear();
                     Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
-                    
+
                     destination = new Destination(newmarker, selected_loc, alarm);
 
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
                     dest_loc.setLongitude(selected_latlng.longitude);
                     dest_loc.setLatitude(selected_latlng.latitude);
+
                 }
             }
         });
@@ -193,15 +192,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             float distance = location.distanceTo(destination.getLocation());
             Log.d("distance", Float.toString(distance));
             if (distance < destination.getRadius()) {
-                Log.d("location", "distance close enough");
-                if (!destination.getAlarm_active()) {
-                    try {
-                        destination.getAlarm().play();
-                        destination.setAlarm_active(true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                startActivity(new Intent(MapsActivity.this,alarm_popup.class));
             } else {
                 Log.d("location", "distance too far");
             }
