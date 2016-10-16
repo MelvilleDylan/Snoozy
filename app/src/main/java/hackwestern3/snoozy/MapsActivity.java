@@ -53,6 +53,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public int radius;
     private View search_button;
     private Ringtone alarm = null;
+    private LocationManager mLocationManager;
 
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
@@ -149,7 +150,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         */
 
 
-        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
                 LOCATION_REFRESH_DISTANCE, mLocationListener);
@@ -185,6 +186,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 loc.setLongitude(latlng.longitude);
                 loc.setLatitude(latlng.latitude);
                 destination.setLocation(loc);
+
+                //check for distance here as well
+                String provider = null;
+                try{
+                    mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+
+                    if ( mLocationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+                        provider = LocationManager.GPS_PROVIDER ;
+                        Log.d("Unity", "Using GPS");
+                        //m_locationManager.requestLocationUpdates(provider, 0, 0, this);
+                    } else if(mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                        provider = LocationManager.NETWORK_PROVIDER;
+                        Log.d("Unity", "Using Netword");
+                        //m_locationManager.requestLocationUpdates(provider, 0, 0, this);
+                    } else {
+                        Log.d("Unity", "Provider Not available");
+                    }
+
+                }catch(Exception ex){
+                    Log.d("Unity", "locatons error " + ex.getMessage());
+                }
+
+                Location location = mLocationManager.getLastKnownLocation(provider);
+
+                float distance = location.distanceTo(destination.getLocation());
+                Log.d("distance", Float.toString(distance));
+                if (distance < radius) {
+                    startActivity(new Intent(MapsActivity.this,alarm_popup.class));
+                } else {
+                    Log.d("location", "distance too far");
+                }
             }
 
             @Override
