@@ -26,15 +26,16 @@
         android:textSize="14sp"
         />
 
-    <Button
+    <!--<Button
         android:id="@+id/button1"
         android:layout_width="48dp"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        />
+        android:text="Go!"
+        />-->
 
-    <EditText
+    <!--<EditText
         android:layout_width="200dp"
         android:layout_height="40dp"
         android:id="@+id/location_input"
@@ -43,7 +44,17 @@
         android:layout_alignParentBottom="true"
         android:background="#E0E0E0"
         android:hint="Location" android:inputType="text"
-        android:paddingLeft="8dp"
+        android:paddingLeft="8dp">
+    </EditText>-->
+
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_toRightOf="@id/time_of_arrival"
+
+        android:layout_alignParentBottom="true"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         />
 
 </RelativeLayout>

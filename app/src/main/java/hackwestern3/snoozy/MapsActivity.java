@@ -1,6 +1,7 @@
 package hackwestern3.snoozy;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.content.Intent;
@@ -13,21 +14,29 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -35,19 +44,20 @@ import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private static final int LOCATION_REFRESH_DISTANCE = 10; //td- figure out number to go here
-    private static final int LOCATION_REFRESH_TIME = 10; //td- figure out number to go here
+    private static final int LOCATION_REFRESH_DISTANCE = 5; //td- figure out number to go here
+    private static final int LOCATION_REFRESH_TIME = 5; //td- figure out number to go here
     private GoogleMap mMap;
-    private LatLng destination;
+    private LatLng coordinates;
     private Location dest_loc;
     private Uri notification;
-    private Ringtone alarm;
-    private Boolean alarm_active = false;
     public int radius;
     private View search_button;
+    private Ringtone alarm = null;
 
     private int mInterval = 5000; // 5 seconds by default, can be changed later
     final static int REQUEST_LOCATION = 0;
+
+    private Destination destination;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +67,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        destination = new Destination(null, null, null);
     }
 
     @Override
@@ -98,19 +108,109 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-        search_button = findViewById(R.id.button1);
+        /*search_button = findViewById(R.id.button1);
 
         search_button.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
 
-                EditText loc_input = (EditText) findViewById(R.id.location_input);
-                String g = loc_input.getText().toString();
+                PlaceAutocompleteFragment loc_input = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+                //String g = loc_input.getText().toString();
+
+                //Log.d("It says", g);
+
+
+            }
+        });*/
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+            mMap.setMyLocationEnabled(true);
+        } else {
+            // permission has been granted, continue as usual
+            mMap.setMyLocationEnabled(true);
+        }
+
+        /*
+        // Add a temp marker in not Sydney and move the camera
+        double lat = 43.013909;//43.013409;
+        double lon = -81.295102;//-81.295102;
+
+        destination = new LatLng(lat, lon);*/
+        dest_loc = new Location("destination");
+        /*
+        dest_loc.setLongitude(lon);
+        dest_loc.setLatitude(lat);
+        mMap.addMarker(new MarkerOptions().position(destination).title("Marker not in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(destination));
+        */
+
+
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                LOCATION_REFRESH_DISTANCE, mLocationListener);
+
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng selected_latlng) {
+                Log.d("mclick", "screen pressed");
+
+                    Location selected_loc = new Location("destination");
+                    selected_loc.setLongitude(selected_latlng.longitude);
+                    selected_loc.setLatitude(selected_latlng.latitude);
+
+                    mMap.clear();
+                    Marker newmarker = mMap.addMarker(new MarkerOptions().position(selected_latlng).title("New Marker").draggable(true));
+
+                    destination = new Destination(newmarker, selected_loc, alarm);
+
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(selected_latlng));
+                    dest_loc.setLongitude(selected_latlng.longitude);
+                    dest_loc.setLatitude(selected_latlng.latitude);
+
+            }
+
+        });
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                LatLng latlng = marker.getPosition();
+
+                Location loc = new Location("destination"); //TODO: use the previous location name
+                loc.setLongitude(latlng.longitude);
+                loc.setLatitude(latlng.latitude);
+                destination.setLocation(loc);
+            }
+
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+        });
+
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.getView().setBackgroundColor(Color.WHITE);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i("Here", "Place: " + place.getName());
+                String g = (String) place.getName();
 
                 Geocoder geocoder = new Geocoder(getBaseContext());
                 List<Address> addresses = null;
@@ -125,58 +225,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } catch (Exception e) {
                 }
             }
-        });
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
-            mMap.setMyLocationEnabled(true);
-        } else {
-            // permission has been granted, continue as usual
-            mMap.setMyLocationEnabled(true);
-        }
-
-
-        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
-                LOCATION_REFRESH_DISTANCE, mLocationListener);
-
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
-            public void onMapClick(LatLng arg0) {
-                Log.d("mclick", "screen pressed");
-                if (alarm_active) {
-                    Log.d("mclick", "alarm turning off");
-                    alarm.stop();
-                    alarm_active = false;
-                }
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("Here", "An error occurred: " + status);
             }
         });
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
-
         @Override
         public void onLocationChanged(final Location location) {
             //your code here
-            float distance = location.distanceTo(dest_loc);
+            float distance = location.distanceTo(destination.getLocation());
             Log.d("distance", Float.toString(distance));
             if (distance < radius) {
-                Log.d("location", "distance close enough");
-                if (!alarm_active) {
-                    try {
-                        notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-                        alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                        alarm.play();
-                        alarm_active = true;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                startActivity(new Intent(MapsActivity.this,alarm_popup.class));
             } else {
                 Log.d("location", "distance too far");
             }
@@ -197,12 +262,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.locationHistory:
+                Intent locations = new Intent(MapsActivity.this, LocationHistory.class );
+                Log.d("Settings","Settings Button Pressed");
+                startActivity(locations);
+                return true;
             case R.id.exit_on_tap:
                 finish();
                 return true;
@@ -216,6 +286,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+
     protected void search(List<Address> addresses) {
 
         Address address = (Address) addresses.get(0);
@@ -223,7 +295,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         double home_lat = address.getLatitude();
         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
 
-        String location_input = String.format(
+        String place_autocomplete_fragment = String.format(
                 "%s, %s",
                 address.getMaxAddressLineIndex() > 0 ? address
                         .getAddressLine(0) : "", address.getCountryName());
@@ -231,7 +303,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(latLng);
-        markerOptions.title(location_input);
+        markerOptions.title(place_autocomplete_fragment);
+        markerOptions.draggable(true);
 
         dest_loc.setLongitude(latLng.longitude);
         dest_loc.setLatitude(latLng.latitude);
@@ -242,4 +315,66 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.zoomTo(14));
 
     }
+
+
+    class Destination {
+        private Marker marker;
+        private int radius = 300;
+        private Location location;
+        private Ringtone alarm;
+        private Boolean alarm_active = false;
+
+        Destination (Marker m, Location l) {
+            marker = m;
+            location = l;
+            alarm = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        }
+
+        Destination (Marker m, Location l, Ringtone r) {
+            marker = m;
+            location = l;
+            alarm = r;
+        }
+
+        public Marker getMarker() {
+            return marker;
+        }
+
+        public int getRadius() {
+            return radius;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public Ringtone getAlarm() {
+            return alarm;
+        }
+
+        public void setMarker(Marker marker) {
+            this.marker = marker;
+        }
+
+        public void setRadius(int radius) {
+            this.radius = radius;
+        }
+
+        public void setLocation(Location location) {
+            this.location = location;
+        }
+
+        public void setAlarm(Ringtone alarm) {
+            this.alarm = alarm;
+        }
+
+        public Boolean getAlarm_active() {
+            return alarm_active;
+        }
+
+        public void setAlarm_active(Boolean alarm_active) {
+            this.alarm_active = alarm_active;
+        }
+    }
+
 }
